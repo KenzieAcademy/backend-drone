@@ -6,9 +6,11 @@ name = "pypi"
 [dev-packages]
 
 [packages]
-tellopy = "*"
-"flake8" = "*"
+flake8 = "*"
 pyyaml = "*"
+opencv-python = "*"
+numpy = "*"
+pillow = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "2.7.15"

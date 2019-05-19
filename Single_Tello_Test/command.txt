@@ -1,0 +1,15 @@
+command
+takeoff
+delay 1
+forward 1
+delay 1
+cw 120
+delay 1
+forward 1
+delay 1
+cw 120
+delay 1
+forward 1
+cw 120
+delay 1
+land
