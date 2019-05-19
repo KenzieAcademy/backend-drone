@@ -1,5 +1,8 @@
+<img width="300" src="img/tello_drone_1.jpg" />
+
 # backend-drone
-Students will use python to control a Tello hobby drone, and fly around an obstacle course.
+Students will use python to control a `Tello` hobby drone, and fly around an obstacle course.  The drone can be purchased from the [DJI Store](https://store.dji.com/shop/tello-series)
+for $99.00.  This particular drone is programmable in Python, with sample code in GitHub.
 
 ## Setup
 - Future version will require building a h264 video decoder library.
