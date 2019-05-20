@@ -1,0 +1,5 @@
+command
+takeoff
+delay 1
+flip f
+land

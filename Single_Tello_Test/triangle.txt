@@ -1,6 +1,7 @@
+# Flies a simple triangle pattern, 4 meter legs.
 command
 takeoff
-# speed 100
+delay 1
 up 100
 forward 400
 cw 120
