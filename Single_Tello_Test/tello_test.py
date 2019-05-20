@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+"""
+Executes a series of Tello commands from a flight script
+"""
+
 from tello import Tello
 import sys
 from datetime import datetime
@@ -10,18 +15,18 @@ file_name = sys.argv[1]
 with open(file_name, "r") as f:
     commands = f.readlines()
 
-tello = Tello()
-for command in commands:
-    if command != '' and command != '\n':
-        command = command.rstrip()
-
-        if command.find('delay') != -1:
-            sec = float(command.partition('delay')[2])
-            print 'delay %s' % sec
-            time.sleep(sec)
-            pass
-        else:
-            tello.send_command(command)
+with Tello() as tello:
+    for command in commands:
+        command = command.strip()
+        if command.startswith('#'):
+            continue
+        if command:
+            if command.find('delay') != -1:
+                sec = float(command.partition('delay')[2])
+                print 'delay %s ...' % sec
+                time.sleep(sec)
+            else:
+                tello.send_command(command)
 
 print("Completed.")
 # log = tello.get_log()

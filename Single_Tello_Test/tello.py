@@ -1,7 +1,13 @@
+#!/usr/bin/env python
+"""
+A class to represent a single Tello drone
+"""
+
 import socket
 import threading
 import time
 from stats import Stats
+
 
 class Tello:
     def __init__(self):
@@ -11,7 +17,7 @@ class Tello:
         self.socket.bind((self.local_ip, self.local_port))
 
         # thread for receiving cmd ack
-        self.receive_thread = threading.Thread(target=self._receive_thread)
+        self.receive_thread = threading.Thread(name="TelloRecv", target=self._receive_thread)
         self.receive_thread.daemon = True
         self.receive_thread.start()
 
@@ -20,7 +26,20 @@ class Tello:
         self.tello_adderss = (self.tello_ip, self.tello_port)
         self.log = []
 
-        self.MAX_TIME_OUT = 15.0
+        self.MAX_TIME_OUT = 10.0
+        self.abort = False
+
+    def __enter__(self):
+        print("Tello __enter__ ...")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        print("Tello __exit__ ...")
+
+        #self.socket.close()
+        self.abort = True
+        self.receive_thread.join()
+        print("Tello __exit__ done")
 
     def send_command(self, command):
         """
@@ -34,8 +53,8 @@ class Tello:
         """
         self.log.append(Stats(command, len(self.log)))
 
+        print('sending command: {} to {}' .format(command, self.tello_ip))
         self.socket.sendto(command.encode('utf-8'), self.tello_adderss)
-        print 'sending command: %s to %s' % (command, self.tello_ip)
 
         start = time.time()
         while not self.log[-1].got_response():
@@ -54,14 +73,20 @@ class Tello:
         Runs as a thread, sets self.response to whatever the Tello last returned.
 
         """
-        while True:
+        print("Tello thread enter")
+
+        while not self.abort:
             try:
                 self.response, ip = self.socket.recvfrom(1024)
-                print('from %s: %s' % (ip, self.response))
+                print('Recvd from {}: {}'.format(ip, self.response))
 
                 self.log[-1].add_response(self.response)
             except socket.error, exc:
-                print "Caught exception socket.error : %s" % exc
+                print("SOCKET ERROR: " + str(exc))
+            except UnicodeDecodeError as exc:
+                print("EXCEPTION: " + str(exc))
+
+        print("Tello thread exit")
 
     def on_close(self):
         pass
@@ -71,4 +96,3 @@ class Tello:
 
     def get_log(self):
         return self.log
-
